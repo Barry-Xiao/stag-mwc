@@ -23,8 +23,8 @@ publications = {
     "StrainPhlAn": "Beghini et al. (2020). Integrating taxonomic, functional, and strain-level profiling of diverse microbial communities with bioBakery 3. bioRxiv preprint. 2020 Nov 21. https://doi.org/10.1101/2020.11.19.388223",
     "fastp": "Shifu Chen, Yanqing Zhou, Yaru Chen, Jia Gu (2018). fastp: an ultra-fast all-in-one FASTQ preprocessor. Bioinformatics, Volume 34, Issue 17, 01 September 2018, Pages i884–i890. https://doi.org/10.1093/bioinformatics/bty560",
     "featureCount": "Yang Liao, Gordon K. Smyth, Wei Shi (2014). featureCounts: an efficient general purpose program for assigning sequence reads to genomic features, Bioinformatics, Volume 30, Issue 7, 1 April 2014, Pages 923–930, https://doi.org/10.1093/bioinformatics/btt656",
-    "kneaddata": "Biobakery. 2020. kneaddata. https://github.com/biobakery/kneaddata (accessed Sept 21, 2023)"
-    "Trimmomatic": "Bolger, A. M., Lohse, M., & Usadel, B. (2014). Trimmomatic: A flexible trimmer for Illumina Sequence Data. Bioinformatics, btu170."
-    "TRF": "G. Benson. (1999) Tandem repeats finder: a program to analyze DNA sequences. Nucleic Acids Research, Vol. 27, No. 2, pp. 573-580."
+    "kneaddata": "Biobakery. 2020. kneaddata. https://github.com/biobakery/kneaddata (accessed Sept 21, 2023)",
+    "Trimmomatic": "Bolger, A. M., Lohse, M., & Usadel, B. (2014). Trimmomatic: A flexible trimmer for Illumina Sequence Data. Bioinformatics, btu170.",
+    "TRF": "G. Benson. (1999) Tandem repeats finder: a program to analyze DNA sequences. Nucleic Acids Research, Vol. 27, No. 2, pp. 573-580.",
     "FastQC": "Andrews, S. (2010). FastQC:  A Quality Control Tool for High Throughput Sequence Data [Online]. Available online at: http://www.bioinformatics.babraham.ac.uk/projects/fastqc/"
 }

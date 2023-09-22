@@ -44,8 +44,8 @@ if config["taxonomic_profile"]["kaiju"]:
 
 rule kaiju:
     input:
-        read1=OUTDIR/"host_removal/{sample}_1.fq.gz",
-        read2=OUTDIR/"host_removal/{sample}_2.fq.gz",
+        read1=OUTDIR/"host_removal/{sample}_1.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_1.fq.gz",
+        read2=OUTDIR/"host_removal/{sample}_2.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_2.fq.gz",
     output:
         kaiju=OUTDIR/"kaiju/{sample}.kaiju",
     log:
@@ -54,7 +54,7 @@ rule kaiju:
         "shallow"
     threads: 8
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     params:
@@ -84,7 +84,7 @@ rule kaiju2krona:
         nodes=kaiju_config["nodes"],
         names=kaiju_config["names"],
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -107,7 +107,7 @@ rule create_kaiju_krona_plot:
     shadow:
         "shallow"
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -130,7 +130,7 @@ rule kaiju_report:
         nodes=kaiju_config["nodes"],
         names=kaiju_config["names"],
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -161,7 +161,7 @@ rule join_kaiju_reports:
         feature_column=kaiju_config["feature_column"],
         value_column=kaiju_config["value_column"],
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -185,7 +185,7 @@ rule kaiju_area_plot:
     log:
         LOGDIR/"kaiju/area_plot.log",
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:

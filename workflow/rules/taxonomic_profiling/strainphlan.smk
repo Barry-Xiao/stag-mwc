@@ -43,7 +43,7 @@ rule consensus_markers:
     shadow:
         "shallow"
     conda:
-        "../../envs/metaphlan.yaml"
+        config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:biobakery"+singularity_branch_tag
     threads: 8
@@ -71,7 +71,7 @@ rule print_clades:
     shadow:
         "shallow"
     conda:
-        "../../envs/metaphlan.yaml"
+        config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:biobakery"+singularity_branch_tag
     threads: 8
@@ -105,7 +105,7 @@ rule extract_markers:
     shadow:
         "shallow"
     conda:
-        "../../envs/metaphlan.yaml"
+        config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:biobakery"+singularity_branch_tag
     threads: 8
@@ -137,7 +137,7 @@ rule strainphlan:
     shadow:
         "shallow"
     conda:
-        "../../envs/metaphlan.yaml"
+        config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:biobakery"+singularity_branch_tag
     threads: 8

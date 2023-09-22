@@ -17,7 +17,7 @@ if config["multiqc_report"]:
         shadow:
             "shallow"
         conda:
-            "../../envs/stag-mwc.yaml"
+            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
         container:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         threads: 1

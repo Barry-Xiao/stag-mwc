@@ -28,7 +28,7 @@ if config["naive"]["assess_depth"]:
             "shallow"
         threads: 2
         conda:
-            "../../envs/stag-mwc.yaml",
+            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
         container:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         params:

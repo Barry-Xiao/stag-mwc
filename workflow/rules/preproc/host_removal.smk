@@ -61,7 +61,7 @@ if config["host_removal"]["kraken2"]:
         shadow:
             "shallow"
         conda:
-            "../../envs/stag-mwc.yaml"
+            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
         container:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         threads: 8
@@ -114,7 +114,7 @@ if config["host_removal"]["kraken2"]:
         shadow:
             "shallow"
         conda:
-            "../../envs/stag-mwc.yaml"
+            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
         container:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         threads: 1
@@ -160,7 +160,7 @@ if config["host_removal"]["bowtie2"]:
         threads:
             12
         conda:
-            "../../envs/metaphlan.yaml"
+            config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
         container:
             "docker://quay.io/biocontainers/bowtie2:2.5.1--py38he00c5e5_2"
         params:
@@ -188,7 +188,7 @@ if config["host_removal"]["bowtie2"]:
         threads:
             4
         conda:
-            "../../envs/metaphlan.yaml"
+            config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
         container:
             "docker://quay.io/biocontainers/samtools:1.17--hd87286a_1"
         shell:
@@ -212,7 +212,7 @@ if config["host_removal"]["bowtie2"]:
         threads:
             4
         conda:
-            "../../envs/metaphlan.yaml"
+            config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
         container:
             "docker://quay.io/biocontainers/samtools:1.17--hd87286a_1"
         shell:
@@ -238,7 +238,7 @@ if config["host_removal"]["bowtie2"]:
         threads:
             4
         conda:
-            "../../envs/metaphlan.yaml"
+            config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
         container:
             "docker://quay.io/biocontainers/samtools:1.17--hd87286a_1"
         shell: 
@@ -264,7 +264,7 @@ if config["host_removal"]["bowtie2"]:
         threads:
             4
         conda:
-            "../../envs/metaphlan.yaml"
+            config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
         container:
             "docker://quay.io/biocontainers/samtools:1.17--hd87286a_1"
         shell: 

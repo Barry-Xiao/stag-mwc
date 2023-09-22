@@ -55,8 +55,8 @@ for bbmap_config in config["bbmap"]:
         f"""BBMap reads to {db_name}"""
         name: f"bbmap_{db_name}"
         input:
-            read1=OUTDIR/"host_removal/{sample}_1.fq.gz",
-            read2=OUTDIR/"host_removal/{sample}_2.fq.gz",
+            read1=OUTDIR/"host_removal/{sample}_1.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_1.fq.gz",
+            read2=OUTDIR/"host_removal/{sample}_2.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_2.fq.gz",
         output:
             sam=bbmap_output_folder/"{sample}.sam.gz" if bbmap_config["keep_sam"] else temp(bbmap_output_folder/"{sample}.sam.gz"),
             covstats=bbmap_output_folder/"{sample}.covstats.txt",
@@ -71,7 +71,7 @@ for bbmap_config in config["bbmap"]:
         shadow:
             "shallow"
         conda:
-            "../../envs/stag-mwc.yaml"
+            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
         container:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         threads: 8
@@ -123,7 +123,7 @@ for bbmap_config in config["bbmap"]:
         shadow:
             "shallow"
         conda:
-            "../../envs/stag-mwc.yaml"
+            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
         container:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         threads: 1
@@ -161,7 +161,7 @@ for bbmap_config in config["bbmap"]:
         shadow:
             "shallow"
         conda:
-            "../../envs/stag-mwc.yaml"
+            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
         container:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         threads: 4

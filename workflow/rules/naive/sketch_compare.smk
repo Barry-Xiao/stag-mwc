@@ -28,7 +28,7 @@ rule sketch:
     shadow: 
         "shallow"
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     threads: 4
@@ -54,7 +54,7 @@ rule compare_sketches:
     shadow: 
         "shallow"
     conda: 
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -81,7 +81,7 @@ rule plot_sample_similarity:
         stdout=str(LOGDIR/"sketch_compare/sample_similarity_plot.stdout.log"),
         stderr=str(LOGDIR/"sketch_compare/sample_similarity_plot.stderr.log"),
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:

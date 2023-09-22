@@ -14,13 +14,13 @@
 #########################
 inputdir: "input"
 input_fn_pattern: "{sample}_{readpair}.fq.gz"
-samplesheet: ""           # Three-column samplesheet with sample_id,fastq_1,fastq_2 columns. Used instead of inputdir
-outdir: "output_dir"
-logdir: "output_dir/logs"
-dbdir: "databases"        # Databases will be downloaded to this dir
-report: "StaG_report-"    # Filename prefix for report file ("-{datetime}.html" automatically appended)
+samplesheet: "/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/test_stool.tsv"           # Three-column samplesheet with sample_id,fastq_1,fastq_2 columns. Used instead of inputdir
+outdir: "/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/output_dir"
+logdir: "/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/output_dir/logs"
+dbdir: "/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/databases"        # Databases will be downloaded to this dir
+report: "/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/StaG_report-"    # Filename prefix for report file ("-{datetime}.html" automatically appended)
 email: ""                 # Email to send status message after completed/failed run.
-
+conda: "metaphlan_env"       #specify if local conda env
 
 #########################
 # Remote services
@@ -69,8 +69,8 @@ quality_control:
         extra: ""
         keep_fastq: True
         keep_unmatched: False
-        db_path: ""              # Bowtie2 index database of human reference genome
-        trim_jar: ""             # Path to trimmomatic jar file
+        db_path: "/users/sxiao1/wgs_data/kneaddata_test/GRCh38_noalt_decoy_as"              # Bowtie2 index database of human reference genome
+        trim_jar: "/users/sxiao1/miniconda3/envs/metaphlan_env/share/trimmomatic-0.39-2/trimmomatic.jar"             # Path to trimmomatic jar file
 
 remove_host:
     kraken2:
@@ -134,11 +134,11 @@ krakenuniq:
 
 
 metaphlan:
-    bt2_db_dir: ""           # [Required] Path to MetaPhlAn database dir
-    bt2_index: ""            # [Required] Name of MetaPhlAn database index
+    bt2_db_dir: "/users/sxiao1/wgs_data/databases/MetaPhlAn"           # [Required] Path to MetaPhlAn database dir
+    bt2_index: "mpa_vOct22_CHOCOPhlAnSGB_202212"            # [Required] Name of MetaPhlAn database index
     extra: ""                # Extra command line arguments for MetaPhlAn e.g. "-t rel_ab_w_read_stats"
-    keep_bt2: False          # Keep the bowtie2 files
-    keep_sam: False          # Keep the sam files, set this to True if you want to run StrainPhlAn.
+    keep_bt2: True          # Keep the bowtie2 files
+    keep_sam: True          # Keep the sam files, set this to True if you want to run StrainPhlAn.
     run_krona: True
     heatmap:
         create_plot: True        # Whether to create the MetaPhlAn heatmap plot, set to False to disable
@@ -149,6 +149,7 @@ metaphlan:
         method: "average"        # Linkage method, see scipy.cluster.hierarchy.linkage
         metric: "braycurtis"     # Distrance metric to use
         extra: ""                # Extra params, mostly to set loglevel to DEBUG in case of problems.
+
 
 #########################
 # Strain Level Profiling 

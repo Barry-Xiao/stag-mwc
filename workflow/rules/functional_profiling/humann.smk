@@ -32,8 +32,8 @@ if config["functional_profile"]["humann"]:
 rule humann:
     """Functional profiling using HUMAnN."""
     input:
-        read1=f"{OUTDIR}/host_removal/{{sample}}_1.fq.gz",
-        read2=f"{OUTDIR}/host_removal/{{sample}}_2.fq.gz",
+        read1=f"{OUTDIR}/host_removal/{{sample}}_1.fastq" if config["qc_reads"]["kneaddata"] else f"{OUTDIR}/host_removal/{{sample}}_1.fq.gz",
+        read2=f"{OUTDIR}/host_removal/{{sample}}_2.fastq" if config["qc_reads"]["kneaddata"] else f"{OUTDIR}/host_removal/{{sample}}_2.fq.gz",
         taxonomic_profile=f"{OUTDIR}/metaphlan/{{sample}}.metaphlan.txt",
     output:
         genefamilies=f"{OUTDIR}/humann/{{sample}}_genefamilies.tsv",
@@ -46,7 +46,7 @@ rule humann:
     shadow:
         "shallow"
     conda:
-        "../../envs/humann.yaml"
+        config["conda"] if config["conda"] else "../../envs/humann.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:biobakery"+singularity_branch_tag
     threads: 20
@@ -94,7 +94,7 @@ rule normalize_humann_tables:
     shadow:
         "shallow"
     conda:
-        "../../envs/humann.yaml"
+        config["conda"] if config["conda"] else "../../envs/humann.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:biobakery"+singularity_branch_tag
     threads: 1
@@ -141,7 +141,7 @@ rule humann_join_tables:
     shadow:
         "shallow"
     conda:
-        "../../envs/humann.yaml"
+        config["conda"] if config["conda"] else "../../envs/humann.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:biobakery"+singularity_branch_tag
     threads: 

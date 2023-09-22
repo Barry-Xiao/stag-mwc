@@ -42,8 +42,8 @@ if config["taxonomic_profile"]["metaphlan"] or config["functional_profile"]["hum
 rule metaphlan:
     """Taxonomic profiling using MetaPhlAn."""
     input:
-        read1=f"{OUTDIR}/host_removal/{{sample}}_1.fq.gz",
-        read2=f"{OUTDIR}/host_removal/{{sample}}_2.fq.gz",
+        read1=f"{OUTDIR}/host_removal/{{sample}}_1.fastq" if config["qc_reads"]["kneaddata"] else f"{OUTDIR}/host_removal/{{sample}}_1.fq.gz",
+        read2=f"{OUTDIR}/host_removal/{{sample}}_2.fastq" if config["qc_reads"]["kneaddata"] else f"{OUTDIR}/host_removal/{{sample}}_2.fq.gz",
     output:
         bt2_out=f"{OUTDIR}/metaphlan/{{sample}}.bowtie2.bz2" if mpa_config["keep_bt2"] else temp(f"{OUTDIR}/metaphlan/{{sample}}.bowtie2.bz2"),
         mpa_out=f"{OUTDIR}/metaphlan/{{sample}}.metaphlan.txt",
@@ -54,7 +54,7 @@ rule metaphlan:
     shadow:
         "shallow"
     conda:
-        "../../envs/metaphlan.yaml"
+        config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
     container:
         "docker://quay.io/biocontainers/metaphlan:4.0.6--pyhca03a8a_0"
     threads: 8
@@ -116,7 +116,7 @@ rule combine_metaphlan_tables:
     shadow:
         "shallow"
     conda:
-        "../../envs/metaphlan.yaml"
+        config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
     container:
         "docker://quay.io/biocontainers/metaphlan:4.0.6--pyhca03a8a_0"
     threads: 1
@@ -137,7 +137,7 @@ rule metaphlan_area_plot:
     log:
         f"{LOGDIR}/metaphlan/area_plot.log"
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -163,7 +163,7 @@ rule plot_metaphlan_heatmap:
     shadow:
         "shallow"
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     threads: 1
@@ -204,7 +204,7 @@ rule create_metaphlan_krona_plots:
     shadow:
         "shallow"
     conda:
-        "../../envs/metaphlan.yaml"
+        config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     threads: 1

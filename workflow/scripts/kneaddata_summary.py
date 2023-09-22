@@ -9,6 +9,7 @@ from sys import argv, exit
 from pathlib import Path
 import argparse
 import re
+import os
 
 import pandas as pd
 
@@ -56,7 +57,9 @@ if __name__ == "__main__":
     
     args = parse_args()
 
-    data_kneaddata = parse_kneaddata_log(args.kneaddata)
+    knead_sumlist = [file for file in os.listdir(args.kneaddata) if re.search('_stat.log',file)]
+
+    data_kneaddata = parse_kneaddata_log(knead_sumlist)
 
     df = pd.DataFrame(data_kneaddata).set_index("sample_name")
 

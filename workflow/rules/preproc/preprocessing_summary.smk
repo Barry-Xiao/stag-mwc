@@ -23,7 +23,7 @@ if config["qc_reads"]["kneaddata"]:
         input:
             # Host removal fastq output is used as a proxy to indicate of when all
             # quality control and host removal steps are completed
-            expand(OUTDIR/"host_removal/{sample}_1.fq.gz", sample=SAMPLES),
+            expand(OUTDIR/"host_removal/{sample}_1.fastq", sample=SAMPLES),
         output:
             table=report(OUTDIR/"preprocessing_read_counts.txt",
                 category="Preprocessing",
@@ -31,12 +31,12 @@ if config["qc_reads"]["kneaddata"]:
         log:
             stdout=LOGDIR/"preprocessing_summary.log",
         conda:
-            "../../envs/stag-mwc.yaml"
+            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
         container:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         threads: 1
         params:
-            kneaddata_arg=lambda w: f"--kneaddata {LOGDIR}/host_removal/*_stat.log" 
+            kneaddata_arg=lambda w: f"--kneaddata {LOGDIR}/host_removal" 
         shell:
             """
             workflow/scripts/kneaddata_summary.py \
@@ -63,7 +63,7 @@ else:
         log:
             stdout=LOGDIR/"preprocessing_summary.log",
         conda:
-            "../../envs/stag-mwc.yaml"
+            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
         container:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         threads: 1

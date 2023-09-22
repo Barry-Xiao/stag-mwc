@@ -42,8 +42,8 @@ if config["taxonomic_profile"]["krakenuniq"]:
 
 rule krakenuniq_merge_reads:
     input:
-        read1=OUTDIR/"host_removal/{sample}_1.fq.gz",
-        read2=OUTDIR/"host_removal/{sample}_2.fq.gz",
+        read1=OUTDIR/"host_removal/{sample}_1.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_1.fq.gz",
+        read2=OUTDIR/"host_removal/{sample}_2.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_2.fq.gz",
     output:
         fasta=temp(OUTDIR/"krakenuniq/{sample}.tmp.fa.gz"),
     log:
@@ -52,7 +52,7 @@ rule krakenuniq_merge_reads:
         "shallow"
     threads: 4
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -78,7 +78,7 @@ rule krakenuniq:
         "shallow"
     threads: 8
     conda:
-        "../../envs/krakenuniq.yaml"
+        config["conda"] if config["conda"] else "../../envs/krakenuniq.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:krakenuniq"+singularity_branch_tag
     params:
@@ -112,7 +112,7 @@ rule krakenuniq_combine_reports:
         "shallow"
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -137,7 +137,7 @@ rule krakenuniq_mpa_style:
         stderr=LOGDIR/"krakenuniq/{sample}.mpa_style.stderr",
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -163,7 +163,7 @@ rule krakenuniq_join_mpa:
         stderr=LOGDIR/"krakenuniq/join_krakenuniq_mpa_tables.stderr",
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     params:
@@ -193,7 +193,7 @@ rule krakenuniq_kreport2krona:
         "shallow"
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -218,7 +218,7 @@ rule krakenuniq_krona_plot:
         "shallow"
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:

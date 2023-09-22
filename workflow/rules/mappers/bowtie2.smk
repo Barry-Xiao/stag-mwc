@@ -56,8 +56,8 @@ for bt2_config in config["bowtie2"]:
         """Align reads using Bowtie2."""
         name: f"bowtie2_{bt2_db_name}"
         input:
-            sample=[OUTDIR/"host_removal/{sample}_1.fq.gz",
-                    OUTDIR/"host_removal/{sample}_2.fq.gz"]
+            sample=[OUTDIR/"host_removal/{sample}_1.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_1.fq.gz",
+                    OUTDIR/"host_removal/{sample}_2.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_2.fq.gz"]
         output:
             OUTDIR/"bowtie2/{db_name}/{{sample}}.bam".format(db_name=bt2_db_name) if bt2_config["keep_bam"] else temp(OUTDIR/"bowtie2/{db_name}/{{sample}}.bam".format(db_name=bt2_db_name)),
         log:
@@ -69,7 +69,7 @@ for bt2_config in config["bowtie2"]:
             extra=bt2_config["extra"],
         threads: 8
         conda:
-            "../../envs/metaphlan.yaml"
+            config["conda"] if config["conda"] else "../../envs/metaphlan.yaml"
         container:
             "docker://quay.io/biocontainers/metaphlan:4.0.3--pyhca03a8a_0"
         wrapper:
@@ -91,7 +91,7 @@ for bt2_config in config["bowtie2"]:
         shadow:
             "shallow"
         conda:
-            "../../envs/stag-mwc.yaml"
+            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
         container:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         shell:
@@ -127,7 +127,7 @@ for bt2_config in config["bowtie2"]:
         shadow:
             "shallow"
         conda:
-            "../../envs/stag-mwc.yaml"
+            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
         container:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         threads: 1
@@ -165,7 +165,7 @@ for bt2_config in config["bowtie2"]:
         shadow:
             "shallow"
         conda:
-            "../../envs/stag-mwc.yaml"
+            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
         container:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         threads: 4

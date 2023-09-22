@@ -58,8 +58,8 @@ if config["taxonomic_profile"]["kraken2"]:
 
 rule kraken2:
     input:
-        read1=OUTDIR/"host_removal/{sample}_1.fq.gz",
-        read2=OUTDIR/"host_removal/{sample}_2.fq.gz",
+        read1=OUTDIR/"host_removal/{sample}_1.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_1.fq.gz",
+        read2=OUTDIR/"host_removal/{sample}_2.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_2.fq.gz",
     output:
         kraken=OUTDIR/"kraken2/{sample}.kraken" if kraken2_config["keep_kraken"] else temp(OUTDIR/"kraken2/{sample}.kraken"),
         kreport=OUTDIR/"kraken2/{sample}.kreport" if kraken2_config["keep_kreport"] else temp(OUTDIR/"kraken2/{sample}.kreport"),
@@ -69,7 +69,7 @@ rule kraken2:
         "shallow"
     threads: 8
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     params:
@@ -103,7 +103,7 @@ rule kraken_mpa_style:
         str(LOGDIR/"kraken2/{sample}.mpa_style.log")
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -128,7 +128,7 @@ rule join_kraken2_mpa:
         str(LOGDIR/"kraken2/join_kraken2_mpa_tables.log")
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     params:
@@ -155,7 +155,7 @@ rule kraken2_area_plot:
     log:
         str(LOGDIR/"kraken2/area_plot.kraken2.log")
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -180,7 +180,7 @@ rule combine_kreports:
     shadow:
         "shallow"
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -204,7 +204,7 @@ rule kreport2krona:
         "shallow"
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -226,7 +226,7 @@ rule create_kraken2_krona_plot:
     shadow:
         "shallow"
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -282,7 +282,7 @@ rule bracken_kreport:
     shadow:
         "shallow"
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     params:
@@ -313,7 +313,7 @@ rule bracken_all_levels:
         "shallow"   # sample-level output file with fixed filename: {sample}_bracken.kreport 
     threads: 2
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     params:
@@ -340,7 +340,7 @@ rule bracken_mpa_style:
         str(LOGDIR/"kraken2/{sample}.bracken.mpa_style.log")
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -365,7 +365,7 @@ rule join_bracken_mpa:
         str(LOGDIR/"kraken2/join_bracken_mpa_tables.log")
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     params:
@@ -392,7 +392,7 @@ rule bracken_area_plot:
     log:
         str(LOGDIR/"kraken2/area_plot.bracken.log")
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -416,7 +416,7 @@ rule join_bracken:
         str(LOGDIR/"kraken2/join_bracken_tables.{level}.log")
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     params:
@@ -444,7 +444,7 @@ rule bracken2krona:
     shadow:
         "shallow"
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -466,7 +466,7 @@ rule create_bracken_krona_plot:
     shadow:
         "shallow"
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     shell:
@@ -486,7 +486,7 @@ rule filter_bracken:
         str(LOGDIR/"kraken2/{sample}.{level}.filter_bracken.log")
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     params:
@@ -515,7 +515,7 @@ rule join_bracken_filtered:
         str(LOGDIR/"kraken2/join_bracken_tables.{level}.log")
     threads: 1
     conda:
-        "../../envs/stag-mwc.yaml"
+        config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
     container:
         "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
     params:
