@@ -32,9 +32,11 @@ keep_local: False                    # Keep local copies of remote input files, 
 #########################
 # Pipeline steps included
 #########################
-qc_reads: True
+qc_reads:
+    fastp: False
+    kneaddata: True
 host_removal: 
-    kraken2: True
+    kraken2: False
     bowtie2: False
 multiqc_report: True
 naive:
@@ -44,7 +46,7 @@ taxonomic_profile:
     kaiju: False
     kraken2: False
     krakenuniq: False
-    metaphlan: False
+    metaphlan: True
 strain_level_profiling:
     strainphlan: False    # Will also run metaphlan. Please make sure you've added bt2_db_dir and bt2_index under metaphlan settings.
 functional_profile:
@@ -59,9 +61,17 @@ binning: False
 #########################
 # Preprocessing
 #########################
-fastp:
-    extra: ""
-    keep_output: False       # StaG deletes fastp output files after host removal, set to True to keep them.
+quality_control:
+    fastp:
+        extra: ""
+        keep_output: False       # StaG deletes fastp output files after host removal, set to True to keep them.
+    kneaddata:
+        extra: ""
+        keep_fastq: True
+        keep_unmatched: False
+        db_path: ""              # Bowtie2 index database of human reference genome
+        trim_jar: ""             # Path to trimmomatic jar file
+
 remove_host:
     kraken2:
         db_path: ""              # [Required] Path to folder containing a Kraken2 database with host sequences (taxo.k2d, etc.)

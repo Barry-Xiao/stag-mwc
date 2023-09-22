@@ -5,6 +5,13 @@ from pathlib import Path
 from snakemake.exceptions import WorkflowError
 
 
+run_k2_or_bt2 = config["host_removal"]["kraken2"] or config["host_removal"]["bowtie2"]
+
+if run_k2_or_bt2 and config["qc_reads"]["kneaddata"]:
+    err_message = "No host removal needs to be run after kneaddata"
+    raise WorkflowError(err_message)
+
+
 run_k2_and_bt2 = config["host_removal"]["kraken2"] and config["host_removal"]["bowtie2"]
 
 if run_k2_and_bt2:
@@ -276,7 +283,7 @@ if config["host_removal"]["bowtie2"]:
 #########################################
 #           skip host removal
 #########################################
-if not any(config["host_removal"].values()):
+if (not any(config["host_removal"].values())) and (not config["qc_reads"]["kneaddata"]):
     if not config["fastp"]["keep_output"]:
         err_message = "Set fastp keep_output in config.yaml to True in order to skip host removal.\n"
         err_message += "If you want to run host removal set remove_host in config.yaml to True"
