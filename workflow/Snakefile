@@ -177,10 +177,10 @@ onsuccess:
         with open(citation_filename, "w") as citation_file:
             for citation in sorted(citations):
                 citation_file.write("* "+citation+"\n")
-        citations_link = Path("citations.rst")
-        if citations_link.exists():
-            Path("citations.rst").unlink()
-        Path("citations.rst").symlink_to(citation_filename)
+        #citations_link = Path("citations.rst")
+        #if citations_link.exists():
+        #    Path("citations.rst").unlink()
+        #Path("citations.rst").symlink_to(citation_filename)
 
         unlock_call = copy.deepcopy(argv)
         unlock_call.append("--unlock")

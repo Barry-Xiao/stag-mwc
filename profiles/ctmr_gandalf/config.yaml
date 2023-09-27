@@ -4,29 +4,27 @@
 #######################################
 # General Snakemake settings
 #######################################
-configfile: config/config.yaml
+#configfile: 
 keep-going: False
 rerun-incomplete: True
 printshellcmds: True
 scheduler: greedy
-#use-conda: True
-use-singularity: True
-singularity-prefix: /ceph/db/sing
-singularity-args: "-B /ceph"
+#use-singularity: True
+#singularity-prefix: /ceph/db/sing
+#singularity-args: "-B /ceph"
 
 #######################################
 # Cluster settings
 #######################################
 cluster:
-  mkdir -p slurm_logs/{rule} &&
+  mkdir -p /users/sxiao1/wgs_data/kneaddata_test/stag-mwc/slurm_logs/{rule} &&
   sbatch
-    --partition={resources.partition}
     --nodes=1
     --cpus-per-task={threads}
     --mem={resources.mem_mb}
     --time={resources.time}
     --job-name={rule}-{wildcards}
-    --output=slurm_logs/{rule}/{rule}-{wildcards}-%j.out
+    --output=/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/slurm_logs/{rule}/{rule}-{wildcards}-%j.out
     --parsable
 cluster-cancel: scancel
 cluster-cancel-nargs: 50
@@ -34,7 +32,7 @@ cluster-status: status-sacct.sh
 restart-times: 0
 max-jobs-per-second: 10
 max-status-checks-per-second: 1
-latency-wait: 60
+latency-wait: 120
 jobs: 500
 
 #######################################
@@ -42,21 +40,20 @@ jobs: 500
 #######################################
 local-cores: 2
 default-resources:
-  - cpus_per_task=2
-  - account=bio
-  - partition=ctmr
+  - threads=2
   - time="01:00:00"
-  - mem_mb=10240
+  - mem_mb=2048
 set-threads:
-  - fastp=20
-  - kraken2_remove_host=20
-  - bowtie2_remove_host=20
+  - fastp=4
+  - kraken2_remove_host=8
+  - bowtie2_remove_host=8
+  - kneaddata=8
   - bbcountunique=4
   - sketch=8
   - kaiju=32
   - kraken2=16
   - krakenuniq=24
-  - metaphlan=16
+  - metaphlan=8
   - strainphlan=8
   - bracken=2
   - humann=30
@@ -67,9 +64,12 @@ set-threads:
   - assembly=20
   - consolidate_bins=20
   - blobology=20
+  - multiqc=1
 set-resources:
   - fastp:mem_mb=20240
   - fastp:time="02:00:00"
+  - kneaddata:mem_mb=6144
+  - kneaddata:time="04:00:00"
   - kraken2_remove_host:mem_mb=10240
   - kraken2_remove_host:time="02:00:00"
   - bowtie2_remove_host:mem_mb=10240
@@ -80,7 +80,7 @@ set-resources:
   - kraken2:time="04:00:00"
   - krakenuniq:mem_mb=10240
   - krakenuniq:time="06:00:00"
-  - metaphlan:mem_mb=10240
+  - metaphlan:mem_mb=16384
   - metaphlan:time="04:00:00"
   - strainphlan:mem_mb=10240
   - strainphlan:time="02:00:00"
@@ -94,4 +94,5 @@ set-resources:
   - bbmap:time="04:00:00"
   - bowtie2:mem_mb=10240
   - bowtie2:time="04:00:00"
-
+  - multiqc:time="02:00:00"
+  - multiqc:mem_mb=10240

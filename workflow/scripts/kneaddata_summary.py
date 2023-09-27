@@ -57,11 +57,13 @@ if __name__ == "__main__":
     
     args = parse_args()
 
-    knead_sumlist = [file for file in os.listdir(args.kneaddata) if re.search('_stat.log',file)]
+    knead_sumlist = [os.path.join(args.kneaddata[0], file) for file in os.listdir(args.kneaddata[0]) if re.search('_stat.log',file)]
 
     data_kneaddata = parse_kneaddata_log(knead_sumlist)
 
     df = pd.DataFrame(data_kneaddata).set_index("sample_name")
+
+    df.sort_index(inplace = True)
 
     df.to_csv(args.output_table, sep="\t")
 

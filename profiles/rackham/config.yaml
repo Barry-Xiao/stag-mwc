@@ -1,0 +1,10 @@
+jobscript: "cluster_configs/rackham/slurm-jobscript.sh"
+cluster: "cluster_configs/rackham/slurm-submit.py --partition {cluster.partition} \
+		--ntasks-per-node {cluster.n} --time {cluster.time} --cpus-per-task {cluster.c} --error {cluster.stderr} --output {cluster.stdout} \
+		--job-name '{cluster.jobname}' --nodes {cluster.nodes} --mem-per-cpu {cluster.mem-per-cpu}"
+cluster-status: "cluster_configs/rackham/slurm-status.py"
+cluster-config: "cluster_configs/rackham/rackham.yaml"
+max-jobs-per-second: 10
+max-status-checks-per-second: 10
+local-cores: 1
+jobs: 999

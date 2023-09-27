@@ -1,0 +1,134 @@
+# Cluster config file for StaG-mwc for use on SGE
+__default__:
+   h_rt: "24:00:00"
+   mem_free: "2048M"
+   h_vmem: 2048
+   h_fsize: 20480
+   
+
+#############################
+# Pre-processing
+#############################
+fastp:
+   h_rt: "12:00:00"
+   mem_free: "4096M"
+   h_vmem: 4096
+   h_fsize: 20480
+   n: 4
+   cwd: ""
+   pe: "local 1"
+   o: /dev/null
+   e: /dev/null
+
+kneaddata:
+   h_rt: "12:00:00"
+   mem_free: "6144M"
+   h_vmem: 6144
+   h_fsize: 20480
+   n: 8
+   cwd: ""
+   pe: "local 8"
+   o: /users/sxiao1/wgs_data/kneaddata_test/stag-mwc/cluster_logs/snake.job.{rulename}.{jobid}.log
+   e: /users/sxiao1/wgs_data/kneaddata_test/stag-mwc/cluster_errs/snake.job.{rulename}.{jobid}.err
+
+
+remove_host:
+   h_rt: "12:00:00"
+   mem_free: "6144M"
+   h_vmem: 6144
+   h_fsize: 20480
+   n: 8
+   cwd: ""
+   pe: "local 1"
+   o: /dev/null
+   e: /dev/null
+#   o: cluster_logs/snake.job.{rulename}.{jobid}.log
+#   e: cluster_errs/snake.job.{rulename}.{jobid}.err
+
+#bbcountunique:
+
+#############################
+# Naive comparisons
+#############################
+#sketch:
+
+#############################
+# Taxonomic profiling
+#############################
+#kaiju:
+
+kraken2:
+   h_rt: "24:00:00"
+   mem_free: "303104M"
+   h_vmem: 303104
+   h_fsize: 20480
+   n: 8
+   cwd: ""
+   pe: "local 1"
+   o: /users/sxiao1/wgs_data/kneaddata_test/stag-mwc/cluster_logs/snake.job.{rulename}.{jobid}.log
+   e: /users/sxiao1/wgs_data/kneaddata_test/stag-mwc/cluster_errs/snake.job.{rulename}.{jobid}.err
+
+#krakenuniq:
+
+metaphlan:
+   h_rt: "24:00:00"
+   mem_free: "16384M"
+   h_vmem: 16384
+   h_fsize: 20480
+   n: 4
+   cwd: ""
+   pe: "local 4"
+   o: /users/sxiao1/wgs_data/kneaddata_test/stag-mwc/cluster_logs/snake.job.{rulename}.{jobid}.log
+   e: /users/sxiao1/wgs_data/kneaddata_test/stag-mwc/cluster_errs/snake.job.{rulename}.{jobid}.err
+
+
+
+#strainphlan:
+#bracken:
+
+
+
+#############################
+# Functional profiling
+#############################
+#humann:
+
+#############################
+# Antibiotic resistance
+#############################
+#groot_align:
+#align_to_amr:
+
+#############################
+# Mappers
+#############################
+#bbmap:
+#bowtie2:
+
+#############################
+# Assembly
+#############################
+#assembly:
+#consolidate_bins:
+#blobology:
+
+
+kraken_mpa_style:
+   h_rt: "24:00:00"
+   mem_free: "2048M"
+   h_vmem: 2048
+   h_fsize: 20480
+   cwd: ""
+   pe: "local 1"
+   o: cluster_logs/snake.job.{rulename}.{jobid}.log
+   e: cluster_errs/snake.job.{rulename}.{jobid}.err
+
+multiqc:
+   h_rt: "24:00:00"
+   mem_free: "12288M"
+   h_vmem: 12288
+   h_fsize: 20480
+   cwd: ""
+   pe: "local 1"
+   o: cluster_logs/snake.job.{rulename}.{jobid}.log
+   e: cluster_errs/snake.job.{rulename}.{jobid}.err

@@ -1,0 +1,107 @@
+# Cluster config file for StaG-mwc for use on UPPMAX Rackham
+__default__:
+    partition: defq
+    time: 30:00
+    n: 1
+    stderr: slurm_errs/slurm-{rule}-{wildcards}.stderr
+    stdout: slurm_logs/slurm-{rule}-{wildcards}.stdout
+    jobname: "[{rule}]: {wildcards}"
+
+
+#############################
+# Pre-processing
+#############################
+fastp:
+    partition: defq
+    time: "1:0:0"
+    nodes: 1
+    c: 2
+    n: 1
+    stderr: slurm_errs/slurm-{rule}-{wildcards}.stderr
+    stdout: slurm_logs/slurm-{rule}-{wildcards}.stdout
+    jobname: "[{rule}]: {wildcards}"
+    mem-per-cpu: 4096M
+remove_host:
+    partition: defq
+    time: "1:0:0"
+    nodes: 1
+    c: 4
+    n: 1
+    stderr: slurm_errs/slurm-{rule}-{wildcards}.stderr
+    stdout: slurm_logs/slurm-{rule}-{wildcards}.stdout
+    jobname: "[{rule}]: {wildcards}"
+    mem-per-cpu: 6144M
+#bbcountunique:
+
+#############################
+# Naive comparisons
+#############################
+#sketch:
+
+#############################
+# Taxonomic profiling
+#############################
+#kaiju:
+kraken2:
+    partition: defq
+    time: "3:0:0"
+    nodes: 1
+    c: 1
+    n: 1
+    stderr: slurm_errs/slurm-{rule}-{wildcards}.stderr
+    stdout: slurm_logs/slurm-{rule}-{wildcards}.stdout
+    jobname: "[{rule}]: {wildcards}"
+    mem-per-cpu: 73728M
+
+kraken_mpa_style:
+    partition: defq
+    time: "1:0:0"
+    nodes: 1
+    c: 1
+    n: 1
+    stderr: slurm_errs/slurm-{rule}-{wildcards}.stderr
+    stdout: slurm_logs/slurm-{rule}-{wildcards}.stdout
+    jobname: "[{rule}]: {wildcards}"
+    mem-per-cpu: 2048M
+
+
+multiqc:
+    partition: defq
+    time: "1:0:0"
+    nodes: 1
+    c: 1
+    n: 1
+    stderr: slurm_errs/slurm-{rule}-{wildcards}.stderr
+    stdout: slurm_logs/slurm-{rule}-{wildcards}.stdout
+    jobname: "[{rule}]: {wildcards}"
+    mem-per-cpu: 12288M
+
+#krakenuniq:
+#metaphlan:
+#strainphlan: 
+#bracken:
+
+#############################
+# Functional profiling
+#############################
+#humann:
+
+#############################
+# Antibiotic resistance
+#############################
+#groot_align:
+#align_to_amr:
+
+#############################
+# Mappers
+#############################
+#bbmap:
+#bowtie2:
+
+#############################
+# Assembly
+#############################
+#assembly:
+#consolidate_bins:
+#blobology:
+
