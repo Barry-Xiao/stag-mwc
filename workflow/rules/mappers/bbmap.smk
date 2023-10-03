@@ -5,6 +5,10 @@ from pathlib import Path
 
 from snakemake.exceptions import WorkflowError
 
+##run kneaddata only but not kraken input as fastq otherwise fq.gz
+run_kd_only = config["qc_reads"]["kneaddata"] and (not config["host_removal"]["kraken2"])
+
+
 for bbmap_config in config["bbmap"]:
     db_name = bbmap_config["db_name"]
     bbmap_output_folder = OUTDIR/"bbmap/{db_name}".format(db_name=db_name)
@@ -55,8 +59,8 @@ for bbmap_config in config["bbmap"]:
         f"""BBMap reads to {db_name}"""
         name: f"bbmap_{db_name}"
         input:
-            read1=OUTDIR/"host_removal/{sample}_1.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_1.fq.gz",
-            read2=OUTDIR/"host_removal/{sample}_2.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_2.fq.gz",
+            read1=OUTDIR/"kneaddata/{sample}_1.fastq" if run_kd_only else OUTDIR/"host_removal/{sample}_1.fq.gz",
+            read2=OUTDIR/"kneaddata/{sample}_2.fastq" if run_kd_only else OUTDIR/"host_removal/{sample}_2.fq.gz",
         output:
             sam=bbmap_output_folder/"{sample}.sam.gz" if bbmap_config["keep_sam"] else temp(bbmap_output_folder/"{sample}.sam.gz"),
             covstats=bbmap_output_folder/"{sample}.covstats.txt",

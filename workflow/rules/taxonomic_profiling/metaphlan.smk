@@ -4,6 +4,9 @@
 from pathlib import Path
 from snakemake.exceptions import WorkflowError
 
+##run kneaddata only but not kraken input as fastq otherwise fq.gz
+run_kd_only = config["qc_reads"]["kneaddata"] and (not config["host_removal"]["kraken2"])
+
 localrules:
     combine_metaphlan_tables,
     metaphlan_krona,
@@ -42,8 +45,8 @@ if config["taxonomic_profile"]["metaphlan"] or config["functional_profile"]["hum
 rule metaphlan:
     """Taxonomic profiling using MetaPhlAn."""
     input:
-        read1=f"{OUTDIR}/host_removal/{{sample}}_1.fastq" if config["qc_reads"]["kneaddata"] else f"{OUTDIR}/host_removal/{{sample}}_1.fq.gz",
-        read2=f"{OUTDIR}/host_removal/{{sample}}_2.fastq" if config["qc_reads"]["kneaddata"] else f"{OUTDIR}/host_removal/{{sample}}_2.fq.gz",
+        read1=f"{OUTDIR}/kneaddata/{{sample}}_1.fastq" if run_kd_only else f"{OUTDIR}/host_removal/{{sample}}_1.fq.gz",
+        read2=f"{OUTDIR}/kneaddata/{{sample}}_2.fastq" if run_kd_only else f"{OUTDIR}/host_removal/{{sample}}_2.fq.gz",
     output:
         bt2_out=f"{OUTDIR}/metaphlan/{{sample}}.bowtie2.bz2" if mpa_config["keep_bt2"] else temp(f"{OUTDIR}/metaphlan/{{sample}}.bowtie2.bz2"),
         mpa_out=f"{OUTDIR}/metaphlan/{{sample}}.metaphlan.txt",

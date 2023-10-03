@@ -5,6 +5,9 @@ from pathlib import Path
 
 from snakemake.exceptions import WorkflowError
 
+##run kneaddata only but not kraken input as fastq otherwise fq.gz
+run_kd_only = config["qc_reads"]["kneaddata"] and (not config["host_removal"]["kraken2"])
+
 bt2_db_extensions = (".1.bt2", ".1.bt2l")
 for bt2_config in config["bowtie2"]:
     bt2_db_name = Path(bt2_config["db_prefix"]).name
@@ -56,8 +59,8 @@ for bt2_config in config["bowtie2"]:
         """Align reads using Bowtie2."""
         name: f"bowtie2_{bt2_db_name}"
         input:
-            sample=[OUTDIR/"host_removal/{sample}_1.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_1.fq.gz",
-                    OUTDIR/"host_removal/{sample}_2.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_2.fq.gz"]
+            sample=[OUTDIR/"kneaddata/{sample}_1.fastq" if run_kd_only else OUTDIR/"host_removal/{sample}_1.fq.gz",
+                    OUTDIR/"kneaddata/{sample}_2.fastq" if run_kd_only else OUTDIR/"host_removal/{sample}_2.fq.gz"]
         output:
             OUTDIR/"bowtie2/{db_name}/{{sample}}.bam".format(db_name=bt2_db_name) if bt2_config["keep_bam"] else temp(OUTDIR/"bowtie2/{db_name}/{{sample}}.bam".format(db_name=bt2_db_name)),
         log:

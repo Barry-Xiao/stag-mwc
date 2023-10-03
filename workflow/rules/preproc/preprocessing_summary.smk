@@ -36,11 +36,13 @@ if config["qc_reads"]["kneaddata"]:
             "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
         threads: 1
         params:
-            kneaddata_arg=lambda w: f"--kneaddata {LOGDIR}/host_removal" 
+            kneaddata_arg=lambda w: f"--kneaddata {LOGDIR}/kneaddata/*.kneaddata.log"
+            kraken2_arg=lambda w: f"--kraken2 {LOGDIR}/host_removal/*.kraken2.log" if config["host_removal"]["kraken2"] else ""
         shell:
             """
             workflow/scripts/kneaddata_summary.py \
                 {params.kneaddata_arg} \
+                {params.kraken2_arg} \
                 --output-table {output.table} \
                 > {log.stdout}
             """

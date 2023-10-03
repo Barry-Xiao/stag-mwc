@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """Summarize read counts from kneaddata."""
-__author__ = "SX"
-__date__ = "20230921"
-__version__ = 0.1
 
 
 from sys import argv, exit
@@ -12,15 +9,24 @@ import re
 import os
 
 import pandas as pd
+import matplotlib as mpl
+mpl.use("agg")
+mpl.rcParams.update({'figure.autolayout': True})
+import matplotlib.pyplot as plt
 
 def parse_args():
-    desc = f"{__doc__} Copyright (c) {__author__} {__date__}. Version v{__version__}"
+    desc =  "Summarize read counts from kneaddata. Adopted from preprocessing_summary.py by CTMR, Fredrik Boulund"
     parser = argparse.ArgumentParser(description=desc)
-    parser.add_argument("--kneaddata", metavar="sample_stat.log", nargs="+",
+    parser.add_argument("--kneaddata", metavar="kneaddata/sample.log", nargs="+",
             help="kneaddata standard output log file.")
+    parser.add_argument("--kraken2", metavar="host_removal/sample.kraken2.log", nargs="+",
+            help="Kraken2 log output.")
     parser.add_argument("-o", "--output-table", metavar="TSV",
             default="read_processing_summary.txt",
             help="Filename of output table in tsv format [%(default)s].")
+    parser.add_argument("-p", "--output-plot", metavar="PDF",
+            default="",
+            help="Filename of output table in PDF format [%(default)s].")
 
     if len(argv) < 2:
         parser.print_help()
@@ -31,11 +37,10 @@ def parse_args():
 
 
 def parse_kneaddata_log(logfiles):
-    loglist = []
     for logfile in logfiles:
         logdict = {}
         with open(logfile) as f:
-            logdict['sample_name'] = Path(logfile).stem.split("_")[0]
+            logdict['Sample'] = Path(logfile).stem.split(".")[0]
             for line in f:
                 if re.search("Initial number of reads",line):
                     temp_raw = int(float(line.split(':')[-1]))
@@ -49,23 +54,59 @@ def parse_kneaddata_log(logfiles):
                 if re.search("Total reads after merging results from multiple databases.*paired_1.fastq",line):
                     logdict['after_bowtie2_host_removal'] = int(float(line.split(':')[-1]))
                 
-            loglist.append(logdict)
-    return loglist
-        
+                yield logdict
+
+def parse_kraken2_logs(logfiles):
+    for logfile in logfiles:
+        with open(logfile) as f:
+            sample_name = Path(logfile).stem.split(".")[0]
+            for line in f:
+                if " unclassified" in line:
+                    yield {
+                        "Sample": sample_name,
+                        "after_kraken2_host_removal": int(line.strip().split()[0]),
+                    }
+
 
 if __name__ == "__main__":
     
     args = parse_args()
 
-    knead_sumlist = [os.path.join(args.kneaddata[0], file) for file in os.listdir(args.kneaddata[0]) if re.search('_stat.log',file)]
+    dfs = {
+        "kneaddata": pd.DataFrame(),
+        "kraken2": pd.DataFrame(),
+    }
 
-    data_kneaddata = parse_kneaddata_log(knead_sumlist)
+    data_kneaddata = list(parse_kneaddata_log(args.kneaddata))
+    dfs["kneaddata"] = pd.DataFrame(data_kneaddata).set_index("Sample")
+    if args.kraken2:
+        data_kraken2 = list(parse_kraken2_logs(args.kraken2))
+        dfs["kraken2"] = pd.DataFrame(data_kraken2).set_index("Sample")
 
-    df = pd.DataFrame(data_kneaddata).set_index("sample_name")
+    df = pd.concat(dfs.values(), axis="columns")
 
-    df.sort_index(inplace = True)
+    column_order = [
+        "raw_read",
+        "after_trimmomatic",
+        "after_bowtie2_host_removal",
+        "after_kraken2_host_removal",
+    ]
+
+    final_columns = [c for c in column_order if c in df.columns]
+    df = df[final_columns]
 
     df.to_csv(args.output_table, sep="\t")
 
+    if args.output_plot:
+        fig, ax = plt.subplots(figsize=(6, 5))
+        df[final_columns[1:]]\
+            .transpose()\
+            .plot(kind="line", style=".-", ax=ax)
+        ax.set_title("Reads passing through QC and host removal")
+        ax.set_xlabel("Stage")
+        ax.set_ylabel("Reads")
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(handles, labels, loc="upper left", bbox_to_anchor=(0, -0.1))
+        fig.savefig(args.output_plot, bbox_inches="tight")
 
 

@@ -72,7 +72,7 @@ kd_config = config["quality_control"]["kneaddata"]
 if config["qc_reads"]["kneaddata"]:
     # Add final output files from this module to 'all_outputs' from
     # the main Snakefile scope. SAMPLES is also from the main Snakefile scope.
-    processed_qc = expand(str(OUTDIR/"host_removal/{sample}_{readpair}.fastq"),
+    processed_qc = expand(str(OUTDIR/"kneaddata/{sample}_{readpair}.fastq"),
             sample=SAMPLES,
             readpair=[1, 2])
 
@@ -90,14 +90,14 @@ if config["qc_reads"]["kneaddata"]:
             read1=INPUT_read1,
             read2=INPUT_read2,
         output:
-            paired1=OUTDIR/"host_removal/{sample}_1.fastq" if kd_config["keep_fastq"] else temp(OUTDIR/"host_removal/{sample}_1.fastq"),
-            paired2=OUTDIR/"host_removal/{sample}_2.fastq" if kd_config["keep_fastq"] else temp(OUTDIR/"host_removal/{sample}_2.fastq"),
-            unmatched1=OUTDIR/"host_removal/{sample}_unmatched_1.fastq" if kd_config["keep_unmatched"] else temp(OUTDIR/"host_removal/{sample}_unmatched_1.fastq"),
-            unmatched2=OUTDIR/"host_removal/{sample}_unmatched_2.fastq" if kd_config["keep_unmatched"] else temp(OUTDIR/"host_removal/{sample}_unmatched_2.fastq"),
-            runlog=LOGDIR/"host_removal/{sample}.log",
+            paired1=OUTDIR/"kneaddata/{sample}_1.fastq" if kd_config["keep_fastq"] else temp(OUTDIR/"kneaddata/{sample}_1.fastq"),
+            paired2=OUTDIR/"kneaddata/{sample}_2.fastq" if kd_config["keep_fastq"] else temp(OUTDIR/"kneaddata/{sample}_2.fastq"),
+            unmatched1=OUTDIR/"kneaddata/{sample}_unmatched_1.fastq" if kd_config["keep_unmatched"] else temp(OUTDIR/"kneaddata/{sample}_unmatched_1.fastq"),
+            unmatched2=OUTDIR/"kneaddata/{sample}_unmatched_2.fastq" if kd_config["keep_unmatched"] else temp(OUTDIR/"kneaddata/{sample}_unmatched_2.fastq"),
+            runlog=LOGDIR/"kneaddata/{sample}.log",
             fastqcout=directory(OUTDIR/"fastqc/{sample}"),
         log:
-            stdout=str(LOGDIR/"host_removal/{sample}_stat.log"),
+            stdout=str(LOGDIR/"kneaddata/{sample}.kneaddata.log"),
         shadow:
             "shallow"
         conda:
@@ -107,16 +107,16 @@ if config["qc_reads"]["kneaddata"]:
         threads: 8
         params:
             db=kd_config["db_path"],
-            outdir=lambda w: f"{OUTDIR}/host_removal/{w.sample}_out",
-            output1=lambda w: f"{OUTDIR}/host_removal/{w.sample}_out/{w.sample}_paired_1.fastq",
-            output2=lambda w: f"{OUTDIR}/host_removal/{w.sample}_out/{w.sample}_paired_2.fastq",
-            output3=lambda w: f"{OUTDIR}/host_removal/{w.sample}_out/{w.sample}_unmatched_1.fastq",
-            output4=lambda w: f"{OUTDIR}/host_removal/{w.sample}_out/{w.sample}_unmatched_2.fastq",
-            outputlog=lambda w: f"{OUTDIR}/host_removal/{w.sample}_out/{w.sample}.log",
+            outdir=lambda w: f"{OUTDIR}/kneaddata/{w.sample}_out",
+            output1=lambda w: f"{OUTDIR}/kneaddata/{w.sample}_out/{w.sample}_paired_1.fastq",
+            output2=lambda w: f"{OUTDIR}/kneaddata/{w.sample}_out/{w.sample}_paired_2.fastq",
+            output3=lambda w: f"{OUTDIR}/kneaddata/{w.sample}_out/{w.sample}_unmatched_1.fastq",
+            output4=lambda w: f"{OUTDIR}/kneaddata/{w.sample}_out/{w.sample}_unmatched_2.fastq",
+            outputlog=lambda w: f"{OUTDIR}/kneaddata/{w.sample}_out/{w.sample}.log",
             outprefix=lambda w: f"{w.sample}",
-            outputfastqc=lambda w: f"{OUTDIR}/host_removal/{w.sample}_out/fastqc/*",
+            outputfastqc=lambda w: f"{OUTDIR}/kneaddata/{w.sample}_out/fastqc/*",
             trimmomatic=kd_config["trim_jar"],
-
+            extra=kd_config["extra"],
         shell:
             """
             kneaddata \
@@ -128,7 +128,8 @@ if config["qc_reads"]["kneaddata"]:
                 --run-fastqc-start \
                 --threads {threads} \
                 --output-prefix {params.outprefix} \
-		--trimmomatic {params.trimmomatic}\
+                --trimmomatic {params.trimmomatic}\
+                {params.extra} \
             > {log.stdout}
 
             mv {params.output1} {output.paired1}

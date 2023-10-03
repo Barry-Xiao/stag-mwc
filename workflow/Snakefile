@@ -67,10 +67,7 @@ onstart:
 # Pre-processing
 #############################
 include: "rules/preproc/read_quality.smk"
-if config["qc_reads"]["kneaddata"]:
-    print("Kneaddata has removed the host reads, no need to further remove host reads")
-else:
-    include: "rules/preproc/host_removal.smk"
+include: "rules/preproc/host_removal.smk"
 include: "rules/preproc/preprocessing_summary.smk"
 
 #############################

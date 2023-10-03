@@ -5,10 +5,8 @@ from pathlib import Path
 from snakemake.exceptions import WorkflowError
 
 
-run_k2_or_bt2 = config["host_removal"]["kraken2"] or config["host_removal"]["bowtie2"]
-
-if run_k2_or_bt2 and config["qc_reads"]["kneaddata"]:
-    err_message = "No host removal needs to be run after kneaddata"
+if config["host_removal"]["bowtie2"] and config["qc_reads"]["kneaddata"]:
+    err_message = "Kneaddata has already included bowtie2 to remove host reads"
     raise WorkflowError(err_message)
 
 
@@ -34,21 +32,21 @@ if config["host_removal"]["kraken2"]:
     k2_filtered = expand(OUTDIR/"host_removal/{sample}_{readpair}.fq.gz",
             sample=SAMPLES,
             readpair=[1,2])
-    host_proportions = OUTDIR/"host_removal/host_proportions.txt"
     if rh_kraken2["keep_fastq"]:
         all_outputs.extend(k2_filtered)
-    all_outputs.append(host_proportions)
+
+    if not config["qc_reads"]["kneaddata"]:
+        host_proportions = OUTDIR/"host_removal/host_proportions.txt"
+        all_outputs.append(host_proportions)
 
     citations.add(publications["Kraken2"])
 
-    localrules:
-        plot_proportion_host_kraken2
 
     rule kraken2_host_removal:
         """Filter reads matching host database using Kraken2."""
         input:
-            read1=OUTDIR/"fastp/{sample}_1.fq.gz",
-            read2=OUTDIR/"fastp/{sample}_2.fq.gz",
+            read1=OUTDIR/"kneaddata/{sample}_1.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"fastp/{sample}_1.fq.gz",
+            read2=OUTDIR/"kneaddata/{sample}_2.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"fastp/{sample}_2.fq.gz",
         output:
             read1=OUTDIR/"host_removal/{sample}_1.fq.gz" if rh_kraken2["keep_fastq"] else temp(OUTDIR/"host_removal/{sample}_1.fq.gz"),
             read2=OUTDIR/"host_removal/{sample}_2.fq.gz" if rh_kraken2["keep_fastq"] else temp(OUTDIR/"host_removal/{sample}_2.fq.gz"),
@@ -95,38 +93,43 @@ if config["host_removal"]["kraken2"]:
             """
 
 
-    rule plot_proportion_host_kraken2:
-        """Plot proportion of reads that matched the host DB."""
-        input:
-            expand(LOGDIR/"host_removal/{sample}.kraken2.log", sample=SAMPLES)
-        output:
-            histogram=report(OUTDIR/"host_removal/host_histogram.pdf",
-                       category="Preprocessing",
-                       caption="../../report/host_histogram.rst"),
-            barplot=report(OUTDIR/"host_removal/host_barplot.pdf",
-                       category="Preprocessing",
-                       caption="../../report/host_barplot.rst"),
-            txt=report(OUTDIR/"host_removal/host_proportions.txt",
-                       category="Preprocessing",
-                       caption="../../report/host_proportions.rst"),
-        log:
-            LOGDIR/"host_removal/proportion_host.log",
-        shadow:
-            "shallow"
-        conda:
-            config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
-        container:
-            "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
-        threads: 1
-        shell:
-            """
-            workflow/scripts/plot_proportion_kraken2.py \
-                {input} \
-                --histogram {output.histogram} \
-                --barplot {output.barplot} \
-                --table {output.txt} \
-                2>&1 > {log}
-            """
+    if not config["qc_reads"]["kneaddata"]:
+
+        localrules:
+            plot_proportion_host_kraken2
+
+        rule plot_proportion_host_kraken2:
+            """Plot proportion of reads that matched the host DB."""
+            input:
+                expand(LOGDIR/"host_removal/{sample}.kraken2.log", sample=SAMPLES)
+            output:
+                histogram=report(OUTDIR/"host_removal/host_histogram.pdf",
+                           category="Preprocessing",
+                           caption="../../report/host_histogram.rst"),
+                barplot=report(OUTDIR/"host_removal/host_barplot.pdf",
+                           category="Preprocessing",
+                           caption="../../report/host_barplot.rst"),
+                txt=report(OUTDIR/"host_removal/host_proportions.txt",
+                           category="Preprocessing",
+                           caption="../../report/host_proportions.rst"),
+            log:
+                LOGDIR/"host_removal/proportion_host.log",
+            shadow:
+                "shallow"
+            conda:
+                config["conda"] if config["conda"] else "../../envs/stag-mwc.yaml"
+            container:
+                "oras://ghcr.io/ctmrbio/stag-mwc:stag-mwc"+singularity_branch_tag
+            threads: 1
+            shell:
+                """
+                workflow/scripts/plot_proportion_kraken2.py \
+                    {input} \
+                    --histogram {output.histogram} \
+                    --barplot {output.barplot} \
+                    --table {output.txt} \
+                    2>&1 > {log}
+                """
 
 #########################################
 #              bowtie2

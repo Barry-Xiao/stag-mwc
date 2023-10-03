@@ -4,6 +4,10 @@
 from pathlib import Path
 from snakemake.exceptions import WorkflowError
 
+##run kneaddata only but not kraken input as fastq otherwise fq.gz
+run_kd_only = config["qc_reads"]["kneaddata"] and (not config["host_removal"]["kraken2"])
+
+
 localrules:
     normalize_humann_tables,
     humann_join_tables,
@@ -32,8 +36,8 @@ if config["functional_profile"]["humann"]:
 rule humann:
     """Functional profiling using HUMAnN."""
     input:
-        read1=f"{OUTDIR}/host_removal/{{sample}}_1.fastq" if config["qc_reads"]["kneaddata"] else f"{OUTDIR}/host_removal/{{sample}}_1.fq.gz",
-        read2=f"{OUTDIR}/host_removal/{{sample}}_2.fastq" if config["qc_reads"]["kneaddata"] else f"{OUTDIR}/host_removal/{{sample}}_2.fq.gz",
+        read1=f"{OUTDIR}/kneaddata/{{sample}}_1.fastq" if run_kd_only else f"{OUTDIR}/host_removal/{{sample}}_1.fq.gz",
+        read2=f"{OUTDIR}/kneaddata/{{sample}}_2.fastq" if run_kd_only else f"{OUTDIR}/host_removal/{{sample}}_2.fq.gz",
         taxonomic_profile=f"{OUTDIR}/metaphlan/{{sample}}.metaphlan.txt",
     output:
         genefamilies=f"{OUTDIR}/humann/{{sample}}_genefamilies.tsv",

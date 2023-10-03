@@ -4,6 +4,10 @@ from pathlib import Path
 
 from snakemake.exceptions import WorkflowError
 
+
+##run kneaddata only but not kraken input as fastq otherwise fq.gz
+run_kd_only = config["qc_reads"]["kneaddata"] and (not config["host_removal"]["kraken2"])
+
 localrules:
     create_kaiju_krona_plot,
     kaiju2krona,
@@ -44,8 +48,8 @@ if config["taxonomic_profile"]["kaiju"]:
 
 rule kaiju:
     input:
-        read1=OUTDIR/"host_removal/{sample}_1.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_1.fq.gz",
-        read2=OUTDIR/"host_removal/{sample}_2.fastq" if config["qc_reads"]["kneaddata"] else OUTDIR/"host_removal/{sample}_2.fq.gz",
+        read1=OUTDIR/"kneaddata/{sample}_1.fastq" if run_kd_only else OUTDIR/"host_removal/{sample}_1.fq.gz",
+        read2=OUTDIR/"kneaddata/{sample}_2.fastq" if run_kd_only else OUTDIR/"host_removal/{sample}_2.fq.gz",
     output:
         kaiju=OUTDIR/"kaiju/{sample}.kaiju",
     log:
