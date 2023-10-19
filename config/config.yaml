@@ -15,8 +15,8 @@
 inputdir: "input"
 input_fn_pattern: "{sample}_{readpair}.fq.gz"
 samplesheet: "/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/test_stool.tsv"           # Three-column samplesheet with sample_id,fastq_1,fastq_2 columns. Used instead of inputdir
-outdir: "/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/output_dir"
-logdir: "/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/output_dir/logs"
+outdir: "/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/output_dir/pressure_stool"
+logdir: "/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/output_dir/pressure_stool/logs"
 dbdir: "/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/databases"        # Databases will be downloaded to this dir
 report: "/users/sxiao1/wgs_data/kneaddata_test/stag-mwc/StaG_report-"    # Filename prefix for report file ("-{datetime}.html" automatically appended)
 email: ""                 # Email to send status message after completed/failed run.
@@ -36,7 +36,7 @@ qc_reads:
     fastp: False
     kneaddata: True
 host_removal: 
-    kraken2: False
+    kraken2: True
     bowtie2: False
 multiqc_report: True
 naive:
@@ -48,7 +48,7 @@ taxonomic_profile:
     krakenuniq: False
     metaphlan: True
 strain_level_profiling:
-    strainphlan: False    # Will also run metaphlan. Please make sure you've added bt2_db_dir and bt2_index under metaphlan settings.
+    strainphlan: True    # Will also run metaphlan. Please make sure you've added bt2_db_dir and bt2_index under metaphlan settings.
 functional_profile:
     humann: False         # Will also run metaphlan. Please make sure you've added bt2_db_dir and bt2_index under metaphlan settings.
 mappers:
@@ -68,19 +68,19 @@ quality_control:
     kneaddata:
         extra: ""
         keep_fastq: True
-        keep_unmatched: False
-        db_path: "/users/sxiao1/wgs_data/kneaddata_test/GRCh38_noalt_decoy_as"              # Bowtie2 index database of human reference genome
+        keep_unmatched: True
+        db_path: "/users/sxiao1/wgs_data/kneaddata_test/kneaddata_bowtie2_defaultdb"              # Bowtie2 index database of human reference genome
         trim_jar: "/users/sxiao1/miniconda3/envs/metaphlan_env/share/trimmomatic-0.39-2/trimmomatic.jar"             # Path to trimmomatic jar file
 
 remove_host:
     kraken2:
-        db_path: ""              # [Required] Path to folder containing a Kraken2 database with host sequences (taxo.k2d, etc.)
+        db_path: "/users/sxiao1/wgs_data/databases/Kraken2/kraken2-human-db"              # [Required] Path to folder containing a Kraken2 database with host sequences (taxo.k2d, etc.)
         confidence: 0.1          # Kraken2 confidence score, float in [0,1]
         extra: "--quick"         # Additional command line arguments to kraken2
-        keep_kraken: False       # Keep the kraken files for host removal, set to False to remove them automatically.
-        keep_kreport: False      # Keep the kreport files for host removal, set to False to remove them automatically.
+        keep_kraken: True       # Keep the kraken files for host removal, set to False to remove them automatically.
+        keep_kreport: True      # Keep the kreport files for host removal, set to False to remove them automatically.
         keep_fastq: True         # Keep the host-removed fastq files, set to False to remove them automatically.
-        keep_host_fastq: False   # Keep the host-containing fastq files, set to False to remove them automatically.
+        keep_host_fastq: True   # Keep the host-containing fastq files, set to False to remove them automatically.
     bowtie2:
         db_path: ""              # [Required] Path to bowtie2 database to use for host removal, including database filename prefix (no .1.bt2 etc)
         extra: "--sensitive"
@@ -155,7 +155,8 @@ metaphlan:
 # Strain Level Profiling 
 #########################
 strainphlan:
-    clade_of_interest: ""    # [Required] e.g. s__Bifidobacterium_longum
+    clade_of_interest: True    # set this to False if no print_clades_only.tsv file, otherwise set to True
+    clade_min_prop: 0          # clades need to be available in at least this proportion of total samples
     mode: "accurate"
     extra: ""
 

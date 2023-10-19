@@ -97,8 +97,8 @@ include: "rules/functional_profiling/humann.smk"
 #############################
 # Mappers
 #############################
-include: "rules/mappers/bbmap.smk"
-include: "rules/mappers/bowtie2.smk"
+#include: "rules/mappers/bbmap.smk"
+#include: "rules/mappers/bowtie2.smk"
 
 #############################
 # Assembly

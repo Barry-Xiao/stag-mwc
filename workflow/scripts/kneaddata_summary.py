@@ -53,8 +53,7 @@ def parse_kneaddata_log(logfiles):
                     logdict['after_trimmomatic'] = int(float(line.split(':')[-1]))
                 if re.search("Total reads after merging results from multiple databases.*paired_1.fastq",line):
                     logdict['after_bowtie2_host_removal'] = int(float(line.split(':')[-1]))
-                
-                yield logdict
+            yield logdict
 
 def parse_kraken2_logs(logfiles):
     for logfile in logfiles:

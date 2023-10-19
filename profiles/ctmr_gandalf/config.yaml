@@ -30,9 +30,9 @@ cluster-cancel: scancel
 cluster-cancel-nargs: 50
 cluster-status: status-sacct.sh
 restart-times: 0
-max-jobs-per-second: 10
+max-jobs-per-second: 20
 max-status-checks-per-second: 1
-latency-wait: 120
+latency-wait: 432000
 jobs: 500
 
 #######################################
@@ -40,13 +40,14 @@ jobs: 500
 #######################################
 local-cores: 2
 default-resources:
-  - threads=2
   - time="01:00:00"
   - mem_mb=2048
 set-threads:
   - fastp=4
-  - kraken2_remove_host=8
-  - bowtie2_remove_host=8
+  - kraken2_host_removal=8
+  - bowtie2_host_removal=8
+  - consensus_markers=8
+  - print_clades=8
   - kneaddata=8
   - bbcountunique=4
   - sketch=8
@@ -66,24 +67,30 @@ set-threads:
   - blobology=20
   - multiqc=1
 set-resources:
-  - fastp:mem_mb=20240
+  - fastp:mem_mb=20480
   - fastp:time="02:00:00"
-  - kneaddata:mem_mb=6144
+  - kneaddata:mem_mb=10240
   - kneaddata:time="04:00:00"
-  - kraken2_remove_host:mem_mb=10240
-  - kraken2_remove_host:time="02:00:00"
-  - bowtie2_remove_host:mem_mb=10240
-  - bowtie2_remove_host:time="06:00:00"
+  - kraken2_host_removal:mem_mb=10240
+  - kraken2_host_removal:time="02:00:00"
+  - bowtie2_host_removal:mem_mb=10240
+  - bowtie2_host_removal:time="06:00:00"
+  - consensus_markers:mem_mb=20480
+  - consensus_markers:time="12:00:00"
+  - print_clades:mem_mb=20480
+  - print_clades:time="12:00:00"
+  - extract_markers:mem_mb=20480
+  - extract_markers:time="12:00:00"
   - kaiju:mem_mb=10240
   - kaiju:time="10:00:00"
   - kraken2:mem_mb=10240
   - kraken2:time="04:00:00"
   - krakenuniq:mem_mb=10240
   - krakenuniq:time="06:00:00"
-  - metaphlan:mem_mb=16384
-  - metaphlan:time="04:00:00"
-  - strainphlan:mem_mb=10240
-  - strainphlan:time="02:00:00"
+  - metaphlan:mem_mb=20480
+  - metaphlan:time="24:00:00"
+  - strainphlan:mem_mb=20480
+  - strainphlan:time="12:00:00"
   - humann:mem_mb=10240
   - humann:time="10:00:00"
   - groot_align:mem_mb=10240
@@ -94,5 +101,5 @@ set-resources:
   - bbmap:time="04:00:00"
   - bowtie2:mem_mb=10240
   - bowtie2:time="04:00:00"
-  - multiqc:time="02:00:00"
+  - multiqc:time="04:00:00"
   - multiqc:mem_mb=10240
