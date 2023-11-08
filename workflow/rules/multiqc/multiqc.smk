@@ -1,7 +1,10 @@
 # vim: syntax=python expandtab
 # MultiQC
 
-if config["multiqc_report"]:
+spa_config = config["strainphlan"]
+
+if (config["multiqc_report"] and
+    not spa_config["clade_of_interest"]):
     citations.add(publications["MultiQC"])
 
     mqc_config = config["multiqc"]

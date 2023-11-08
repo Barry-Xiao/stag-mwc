@@ -41,6 +41,7 @@ if config["strain_level_profiling"]["strainphlan"]:
         ref_markers = expand(f"{OUTDIR}/strainphlan/ref_markers/{{clade}}.fna", clade=available_clades),
         spa_alignment = expand(f"{OUTDIR}/strainphlan/{{clade}}/{{clade}}.StrainPhlAn4_concatenated.aln", clade=available_clades),
         spa_tree=expand(f"{OUTDIR}/strainphlan/{{clade}}/RAxML_bestTree.{{clade}}.StrainPhlAn4.tre", clade=available_clades),
+        all_outputs = []
         all_outputs.append(spa_alignment)
         all_outputs.append(spa_tree)
         user_messages.info("If strainphlan failed, ensure your clade_of_interest is present in output/strainphlan/print_clades_only.tsv.")
