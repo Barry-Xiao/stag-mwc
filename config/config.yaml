@@ -111,9 +111,10 @@ kaiju:
 kraken2:
     db: ""                   # [Required] Path to Kraken2 DB folder
     confidence: 0.1          # Kraken2 confidence score, float in [0,1]
-    minimum_hit_groups: 2    # Integer, default 2
+    minimum_hit_groups: 3    # Integer, default 2,, set to 3 to reduce false positives
     extra: ""                # Extra command line arguments for kraken2 (do not add/change output files)
     keep_kraken: False       # Keep the kraken output files
+    keep_seq: False          # keep classified and unclassified sequences
     keep_kreport: True       # Keep the kreport output files
     run_krona: True
     bracken:

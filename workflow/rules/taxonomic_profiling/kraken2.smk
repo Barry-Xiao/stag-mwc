@@ -68,6 +68,10 @@ rule kraken2:
     output:
         kraken=OUTDIR/"kraken2/{sample}.kraken" if kraken2_config["keep_kraken"] else temp(OUTDIR/"kraken2/{sample}.kraken"),
         kreport=OUTDIR/"kraken2/{sample}.kreport" if kraken2_config["keep_kreport"] else temp(OUTDIR/"kraken2/{sample}.kreport"),
+        cl1=OUTDIR/"kraken2/{sample}_classified_1.fq.gz" if kraken2_config["keep_seq"] else temp(OUTDIR/"kraken2/{sample}_classified_1.fq.gz"),
+        cl2=OUTDIR/"kraken2/{sample}_classified_2.fq.gz" if kraken2_config["keep_seq"] else temp(OUTDIR/"kraken2/{sample}_classified_2.fq.gz"),
+        uncl1=OUTDIR/"kraken2/{sample}_unclassified_1.fq.gz" if kraken2_config["keep_seq"] else temp(OUTDIR/"kraken2/{sample}_unclassified_1.fq.gz"),
+        uncl2=OUTDIR/"kraken2/{sample}_unclassified_2.fq.gz" if kraken2_config["keep_seq"] else temp(OUTDIR/"kraken2/{sample}_unclassified_2.fq.gz"),
     log:
         str(LOGDIR/"kraken2/{sample}.kraken2.log")
     shadow: 
@@ -82,6 +86,8 @@ rule kraken2:
         confidence=kraken2_config["confidence"],
         minimum_hit_groups=kraken2_config["minimum_hit_groups"],
         extra=kraken2_config["extra"],
+        classified=lambda w: f"{OUTDIR}/kraken2/{w.sample}_classified#.fq.gz",
+        unclassified=lambda w: f"{OUTDIR}/kraken2/{w.sample}_unclassified#.fq.gz",
     shell:
         """
         kraken2 \
@@ -91,6 +97,8 @@ rule kraken2:
             --threads {threads} \
             --output {output.kraken} \
             --report {output.kreport} \
+            --classified-out {params.classified} \
+            --unclassified-out {params.unclassified} \
             --use-names \
             --paired \
             {input.read1} {input.read2} \
